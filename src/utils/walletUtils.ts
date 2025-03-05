@@ -19,7 +19,8 @@ export const defaultWalletInfo: WalletInfo = {
 };
 
 export const MONAD_TESTNET = {
-  chainId: '0x2797', // 10143 in decimal
+  chainId: 10143, // Using decimal format directly
+  chainIdHex: '0x2797', // Keep hex format for RPC calls
   chainName: 'Monad Testnet',
   nativeCurrency: {
     name: 'Monad',
@@ -46,34 +47,53 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
     const network = await provider.getNetwork();
     const balance = await provider.getBalance(accounts[0]);
     const formattedBalance = ethers.formatEther(balance);
-
-    // Fix: Convert MONAD_TESTNET.chainId to number before comparison with network.chainId
-    const monadChainIdNumber = parseInt(MONAD_TESTNET.chainId, 16);
     
-    // Switch to Monad Testnet if not already on it
-    if (Number(network.chainId) !== monadChainIdNumber) {
+    console.log("Current network chainId:", Number(network.chainId));
+    console.log("Target Monad chainId:", MONAD_TESTNET.chainId);
+    
+    // Check if we need to switch chains - comparing both as numbers
+    if (Number(network.chainId) !== MONAD_TESTNET.chainId) {
+      console.log("Chain mismatch detected, attempting to switch...");
       try {
+        // MetaMask requires the chainId in hex format for RPC calls
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: MONAD_TESTNET.chainId }]
+          params: [{ chainId: MONAD_TESTNET.chainIdHex }]
         });
+        console.log("Successfully switched chain");
       } catch (switchError: any) {
+        console.log("Switch error:", switchError);
         // This error code indicates that the chain has not been added to MetaMask
         if (switchError.code === 4902) {
+          console.log("Chain not added, attempting to add...");
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [MONAD_TESTNET]
+            params: [{
+              chainId: MONAD_TESTNET.chainIdHex,
+              chainName: MONAD_TESTNET.chainName,
+              nativeCurrency: MONAD_TESTNET.nativeCurrency,
+              rpcUrls: MONAD_TESTNET.rpcUrls,
+              blockExplorerUrls: MONAD_TESTNET.blockExplorerUrls
+            }]
           });
+          console.log("Successfully added chain");
         } else {
+          console.error("Failed to switch chains:", switchError);
           throw switchError;
         }
       }
       
-      // After switching or adding the chain, re-initialize the provider to get the updated info
+      // After switching or adding the chain, wait briefly for chain to be updated
+      console.log("Waiting for chain update...");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Re-initialize the provider to get the updated info
       const updatedProvider = new ethers.BrowserProvider(window.ethereum);
       const updatedNetwork = await updatedProvider.getNetwork();
       const updatedBalance = await updatedProvider.getBalance(accounts[0]);
       const updatedFormattedBalance = ethers.formatEther(updatedBalance);
+      
+      console.log("Updated network chainId:", Number(updatedNetwork.chainId));
       
       return {
         address: accounts[0],
