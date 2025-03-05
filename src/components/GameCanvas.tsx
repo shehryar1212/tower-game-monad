@@ -91,7 +91,11 @@ const GameCanvas: React.FC = () => {
   
   // Start a new game
   const handleStartGame = () => {
-    setGameState(prevState => startGame(prevState));
+    // First completely reset the state
+    const freshState = resetGame();
+    // Then start the game with the fresh state
+    setGameState(startGame(freshState));
+    console.log("Game started with fresh state");
   };
   
   // Reset the game
