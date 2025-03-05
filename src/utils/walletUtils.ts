@@ -68,6 +68,21 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
           throw switchError;
         }
       }
+      
+      // After switching or adding the chain, re-initialize the provider to get the updated info
+      const updatedProvider = new ethers.BrowserProvider(window.ethereum);
+      const updatedNetwork = await updatedProvider.getNetwork();
+      const updatedBalance = await updatedProvider.getBalance(accounts[0]);
+      const updatedFormattedBalance = ethers.formatEther(updatedBalance);
+      
+      return {
+        address: accounts[0],
+        balance: updatedFormattedBalance,
+        chainId: Number(updatedNetwork.chainId),
+        connected: true,
+        provider: updatedProvider,
+        type: 'metamask'
+      };
     }
 
     return {
