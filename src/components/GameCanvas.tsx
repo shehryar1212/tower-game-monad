@@ -28,7 +28,7 @@ const GameCanvas: React.FC = () => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
         cancelAnimationFrame(animationFrameRef.current);
-      } else {
+      } else if (gameState.gameStarted && !gameState.gameOver) {
         lastUpdateTimeRef.current = performance.now();
         animationFrameRef.current = requestAnimationFrame(gameLoop);
       }
@@ -39,7 +39,7 @@ const GameCanvas: React.FC = () => {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, [gameState.gameStarted, gameState.gameOver]);
   
   // Main game loop
   const gameLoop = (timestamp: number) => {
@@ -55,7 +55,9 @@ const GameCanvas: React.FC = () => {
       setGameState(prevState => updateGame(prevState));
     }
     
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
+    if (gameState.gameStarted && !gameState.gameOver) {
+      animationFrameRef.current = requestAnimationFrame(gameLoop);
+    }
   };
   
   // Start/stop game loop based on game state
@@ -99,7 +101,11 @@ const GameCanvas: React.FC = () => {
   
   // Place a block
   const handlePlaceBlock = () => {
-    setGameState(prevState => placeBlock(prevState));
+    setGameState(prevState => {
+      const newState = placeBlock(prevState);
+      console.log("After placing block - gameOver:", newState.gameOver, "currentBlock:", newState.currentBlock);
+      return newState;
+    });
   };
   
   // Handle wallet connection

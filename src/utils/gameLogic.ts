@@ -169,11 +169,19 @@ export const placeBlock = (state: GameState): GameState => {
   // Fix: explicitly type the direction as 'left' | 'right'
   const newDirection: 'left' | 'right' = state.direction === 'left' ? 'right' : 'left';
   
+  // Create the next block immediately
+  const nextBlock = createNextBlock({
+    ...state,
+    blocks: [...state.blocks, placedBlock],
+    direction: newDirection,
+    level: newLevel
+  });
+  
   // Update game state
   const newState = {
     ...state,
     blocks: [...state.blocks, placedBlock],
-    currentBlock: null,
+    currentBlock: nextBlock, // Immediately set the next block
     score: state.score + scoreIncrease,
     level: newLevel,
     combo: newCombo,
