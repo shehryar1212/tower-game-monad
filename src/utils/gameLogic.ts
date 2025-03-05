@@ -166,6 +166,9 @@ export const placeBlock = (state: GameState): GameState => {
   // Calculate new level (every 5 blocks)
   const newLevel = Math.floor(state.blocks.length / 5) + 1;
   
+  // Fix: explicitly type the direction as 'left' | 'right'
+  const newDirection: 'left' | 'right' = state.direction === 'left' ? 'right' : 'left';
+  
   // Update game state
   const newState = {
     ...state,
@@ -174,7 +177,10 @@ export const placeBlock = (state: GameState): GameState => {
     score: state.score + scoreIncrease,
     level: newLevel,
     combo: newCombo,
-    direction: state.direction === 'left' ? 'right' : 'left'
+    direction: newDirection,
+    gameOver: state.gameOver,
+    highScore: state.highScore,
+    gameStarted: state.gameStarted
   };
   
   // Save high score if needed

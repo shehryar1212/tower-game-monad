@@ -47,8 +47,11 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
     const balance = await provider.getBalance(accounts[0]);
     const formattedBalance = ethers.formatEther(balance);
 
+    // Fix: Convert MONAD_TESTNET.chainId to number before comparison with network.chainId
+    const monadChainIdNumber = parseInt(MONAD_TESTNET.chainId, 16);
+    
     // Switch to Monad Testnet if not already on it
-    if (Number(network.chainId) !== MONAD_TESTNET.chainId) {
+    if (Number(network.chainId) !== monadChainIdNumber) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',

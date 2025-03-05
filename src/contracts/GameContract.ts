@@ -44,7 +44,8 @@ export const payGameFee = async (walletInfo: WalletInfo): Promise<boolean> => {
     // For simulation purposes, we'll just check if the wallet has enough balance
     const balance = ethers.parseEther(walletInfo.balance);
     
-    if (balance.lt(GAME_FEE)) {
+    // Fix: use < comparison operator instead of .lt() for bigint
+    if (balance < GAME_FEE) {
       throw new Error('Insufficient balance to pay game fee');
     }
     
