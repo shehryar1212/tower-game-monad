@@ -1,7 +1,6 @@
-
 import React from 'react';
 import GameCanvas from '../components/GameCanvas';
-import { Button } from '@/components/ui/button';
+import Leaderboard from '../components/Leaderboard';
 
 const Index = () => {
   return (
@@ -23,8 +22,9 @@ const Index = () => {
         </div>
       </header>
       
-      <main className="flex-1 flex flex-col items-center justify-center p-4">
+      <main className="flex-1 flex flex-col md:flex-row items-center justify-center gap-8 p-4">
         <GameCanvas />
+        <Leaderboard />
       </main>
       
       <footer className="w-full p-4 border-t border-border text-center text-xs text-muted-foreground">
