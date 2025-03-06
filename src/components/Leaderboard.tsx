@@ -39,6 +39,12 @@ const Leaderboard = () => {
       <div className="flex items-center gap-2 mb-4">
         <Trophy className="text-yellow-500" />
         <h2 className="text-xl font-bold">Leaderboard</h2>
+        {error && (
+          <span className="ml-auto text-xs text-amber-600 flex items-center gap-1">
+            <AlertCircle className="h-3 w-3" />
+            Demo mode
+          </span>
+        )}
       </div>
 
       <ScrollArea className="h-[300px] rounded-md border p-4">
