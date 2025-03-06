@@ -17,13 +17,19 @@ const mockLeaderboardData: LeaderboardEntry[] = [
   { id: '10', player_name: 'GamePlayer', score: 180, created_at: new Date().toISOString() },
 ];
 
+// Check if we're using placeholder Supabase credentials
+const isUsingPlaceholderCredentials = () => {
+  return !import.meta.env.VITE_SUPABASE_URL || 
+         import.meta.env.VITE_SUPABASE_URL === 'https://placeholder-url.supabase.co';
+};
+
 export const useLeaderboard = () => {
   return useQuery({
     queryKey: ['leaderboard'],
     queryFn: async (): Promise<LeaderboardEntry[]> => {
       try {
         // Check if we're using placeholder values
-        if (supabase.supabaseUrl === 'https://placeholder-url.supabase.co') {
+        if (isUsingPlaceholderCredentials()) {
           console.log('Using mock leaderboard data since Supabase is not configured');
           return mockLeaderboardData;
         }
