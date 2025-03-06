@@ -1,10 +1,25 @@
 import React from 'react';
 import { useLeaderboard } from '@/hooks/useLeaderboard';
-import { Trophy, Medal, User } from 'lucide-react';
+import { Trophy, Medal, User, AlertCircle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Leaderboard = () => {
-  const { data: leaderboard, isLoading } = useLeaderboard();
+  const { data: leaderboard, isLoading, error } = useLeaderboard();
+
+  if (error) {
+    return (
+      <div className="w-full max-w-sm p-4 border rounded-lg bg-card">
+        <div className="flex items-center gap-2 mb-4 text-destructive">
+          <AlertCircle className="h-5 w-5" />
+          <h2 className="text-xl font-bold">Leaderboard</h2>
+        </div>
+        <div className="p-4 text-sm text-muted-foreground">
+          <p>Unable to connect to the leaderboard service.</p>
+          <p className="mt-2">Play locally and try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

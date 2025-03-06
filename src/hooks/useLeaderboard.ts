@@ -7,14 +7,23 @@ export const useLeaderboard = () => {
   return useQuery({
     queryKey: ['leaderboard'],
     queryFn: async (): Promise<LeaderboardEntry[]> => {
-      const { data, error } = await supabase
-        .from('leaderboard')
-        .select('*')
-        .order('score', { ascending: false })
-        .limit(10);
+      try {
+        const { data, error } = await supabase
+          .from('leaderboard')
+          .select('*')
+          .order('score', { ascending: false })
+          .limit(10);
 
-      if (error) throw error;
-      return data || [];
-    }
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+        throw error;
+      }
+    },
+    // Prevent retries causing too many requests
+    retry: 1,
+    // Gracefully fail without breaking the whole app
+    refetchOnWindowFocus: false
   });
 };
