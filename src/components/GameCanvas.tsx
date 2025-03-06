@@ -4,6 +4,7 @@ import Block from './Block';
 import GameHeader from './GameHeader';
 import GameControls from './GameControls';
 import WalletConnect from './WalletConnect';
+import AnimatedScore from './AnimatedScore';
 import { 
   GameState, 
   GAME_WIDTH, 
@@ -19,9 +20,28 @@ import { WalletInfo, defaultWalletInfo } from '../utils/walletUtils';
 const GameCanvas: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(createInitialState());
   const [walletInfo, setWalletInfo] = useState<WalletInfo>(defaultWalletInfo);
+  const [canvasWidth, setCanvasWidth] = useState(GAME_WIDTH);
   const canvasRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>(0);
   const lastUpdateTimeRef = useRef<number>(0);
+  
+  // Responsive canvas sizing
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setCanvasWidth(Math.min(GAME_WIDTH, window.innerWidth - 32));
+      } else {
+        setCanvasWidth(GAME_WIDTH);
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   
   // Visibility check to pause game when tab is not active
   useEffect(() => {
@@ -131,9 +151,12 @@ const GameCanvas: React.FC = () => {
   // Calculate how much to scroll the view to focus on the current block
   const scrollOffset = Math.max(0, (gameState.blocks.length * BLOCK_HEIGHT) - 400);
   
+  // Calculate scale factor for the canvas based on screen size
+  const scaleRatio = canvasWidth / GAME_WIDTH;
+  
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto p-4">
-      <div className="mb-6 w-full">
+    <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto p-4 appear">
+      <div className="mb-6 w-full fade-up">
         <WalletConnect 
           walletInfo={walletInfo}
           onWalletConnect={handleWalletConnect}
@@ -144,9 +167,9 @@ const GameCanvas: React.FC = () => {
       <GameHeader gameState={gameState} />
       
       <div 
-        className="relative border border-border rounded-lg overflow-hidden bg-gradient-to-b from-background to-secondary"
+        className="relative border border-border rounded-lg overflow-hidden bg-gradient-to-b from-background to-secondary game-container"
         style={{ 
-          width: GAME_WIDTH, 
+          width: canvasWidth, 
           height: 600,
         }}
       >
@@ -157,7 +180,8 @@ const GameCanvas: React.FC = () => {
           onClick={handlePlaceBlock}
           style={{ 
             overflow: 'hidden',
-            transform: `translateY(${-scrollOffset}px)`,
+            transform: `translateY(${-scrollOffset}px) scale(${scaleRatio})`,
+            transformOrigin: 'top center',
             transition: 'transform 0.5s cubic-bezier(0.33, 1, 0.68, 1)',
           }}
         >
@@ -209,7 +233,7 @@ const GameCanvas: React.FC = () => {
       )}
       
       {/* Instructions */}
-      <div className="mt-6 text-center text-sm text-muted-foreground">
+      <div className="mt-6 text-center text-sm text-muted-foreground slide-in-left">
         <p>Click, tap or press SPACE to place blocks</p>
         <p className="mt-2 text-xs">
           Build the tallest tower you can by stacking blocks!

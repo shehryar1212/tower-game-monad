@@ -28,10 +28,13 @@ const Block: React.FC<BlockProps> = ({ block, isBase = false, isNew = false }) =
   // Calculate block shadow based on height
   const shadowIntensity = Math.min(0.3, 0.05 + (block.y * 0.01));
   
+  // Add subtle animation for perfect blocks
+  const animationClass = block.perfect ? 'pulse-soft' : '';
+  
   return (
     <div
       ref={blockRef}
-      className={`absolute game-block ${block.perfect ? 'shine-effect' : ''}`}
+      className={`absolute game-block ${block.perfect ? 'shine-effect' : ''} ${animationClass}`}
       style={{
         left: `${block.x}px`,
         bottom: `${block.y}px`,

@@ -5,6 +5,7 @@ import { GameState } from '../utils/gameLogic';
 import { WalletInfo } from '../utils/walletUtils';
 import { payGameFee, formatMonadAmount, GAME_FEE } from '../contracts/GameContract';
 import { useToast } from '@/hooks/use-toast';
+import AnimatedScore from './AnimatedScore';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -80,16 +81,16 @@ const GameControls: React.FC<GameControlsProps> = ({
   if (gameState.gameOver) {
     return (
       <>
-        <div className="flex flex-col items-center gap-4 mt-4">
+        <div className="flex flex-col items-center gap-4 mt-4 bounce-in">
           <div className="text-xl font-bold mb-2">Game Over!</div>
           <div className="text-sm text-muted-foreground mb-4">
-            Final Score: {gameState.score}
+            Final Score: <AnimatedScore score={gameState.score} />
             {gameState.score >= gameState.highScore && gameState.score > 0 && (
-              <span className="ml-2 text-game-block-success">New High Score!</span>
+              <span className="ml-2 text-game-block-success shine-effect">New High Score!</span>
             )}
           </div>
           <Button 
-            className="bg-game-primary hover:bg-game-primary/90 text-white"
+            className="bg-game-primary hover:bg-game-primary/90 text-white button-hover"
             onClick={handleStartGame}
           >
             Play Again
@@ -97,7 +98,7 @@ const GameControls: React.FC<GameControlsProps> = ({
         </div>
 
         <AlertDialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-          <AlertDialogContent>
+          <AlertDialogContent className="scale-in">
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Payment</AlertDialogTitle>
               <AlertDialogDescription>
@@ -120,15 +121,15 @@ const GameControls: React.FC<GameControlsProps> = ({
   if (!gameState.gameStarted) {
     return (
       <>
-        <div className="flex flex-col items-center gap-4 mt-4">
+        <div className="flex flex-col items-center gap-4 mt-4 bounce-in">
           <div className="text-center mb-4">
-            <h2 className="text-xl font-bold mb-2">Tower Blocks</h2>
-            <p className="text-sm text-muted-foreground max-w-xs">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2">Tower Blocks</h2>
+            <p className="text-sm text-muted-foreground max-w-xs md:max-w-sm">
               Stack blocks to build the tallest tower. Click or tap to place a block.
             </p>
           </div>
           <Button 
-            className="bg-game-primary hover:bg-game-primary/90 text-white"
+            className="bg-game-primary hover:bg-game-primary/90 text-white button-hover"
             onClick={handleStartGame}
             disabled={!walletInfo.connected}
           >
@@ -137,7 +138,7 @@ const GameControls: React.FC<GameControlsProps> = ({
         </div>
 
         <AlertDialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-          <AlertDialogContent>
+          <AlertDialogContent className="scale-in">
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm Payment</AlertDialogTitle>
               <AlertDialogDescription>
@@ -158,9 +159,9 @@ const GameControls: React.FC<GameControlsProps> = ({
   }
 
   return (
-    <div className="flex justify-center w-full mt-4">
+    <div className="flex justify-center w-full mt-4 slide-in-left">
       <Button 
-        className="w-full max-w-xs bg-game-primary hover:bg-game-primary/90 text-white"
+        className="w-full max-w-xs bg-game-primary hover:bg-game-primary/90 text-white button-hover"
         onClick={onPlaceBlock}
       >
         Place Block
