@@ -1,4 +1,3 @@
-
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -47,11 +46,24 @@
   }
 }
 
+/* Additional styling for toast notifications */
+.wallet-connect-toast {
+  max-width: 90%;
+  margin: 0 auto;
+  z-index: 9999;
+}
+
 /* Make responsive adjustments more aggressive to ensure fit */
 @media (max-width: 768px) {
   .game-container {
     transform: scale(0.9);
     transform-origin: top center;
+  }
+  
+  /* Toast adjustments for mobile */
+  .wallet-connect-toast {
+    font-size: 14px;
+    padding: 8px;
   }
 }
 

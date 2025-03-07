@@ -1,8 +1,15 @@
 
 import React from 'react';
-import { WalletInfo, connectMetaMask, connectPhantom } from '../utils/walletUtils';
+import { 
+  WalletInfo, 
+  connectMetaMask, 
+  connectPhantom, 
+  isMobileDevice, 
+  isWalletAvailable
+} from '../utils/walletUtils';
 import { Button } from '@/components/ui/button';
 import { formatMonadAmount, GAME_FEE } from '../contracts/GameContract';
+import { toast } from 'sonner';
 
 interface WalletConnectProps {
   walletInfo: WalletInfo;
@@ -19,8 +26,14 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
     try {
       const wallet = await connectMetaMask();
       onWalletConnect(wallet);
+      toast.success("Wallet connected successfully!");
     } catch (error) {
       console.error('MetaMask connection error:', error);
+      
+      // Don't show error toast if we're redirecting to mobile wallet
+      if (!(error instanceof Error && error.message.includes('connect from'))) {
+        toast.error("Failed to connect wallet. Please try again.");
+      }
     }
   };
 
@@ -28,13 +41,20 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
     try {
       const wallet = await connectPhantom();
       onWalletConnect(wallet);
+      toast.success("Wallet connected successfully!");
     } catch (error) {
       console.error('Phantom connection error:', error);
+      
+      // Don't show error toast if we're redirecting to mobile wallet
+      if (!(error instanceof Error && error.message.includes('connect from'))) {
+        toast.error("Failed to connect wallet. Please try again.");
+      }
     }
   };
 
   const handleDisconnect = () => {
     onWalletDisconnect();
+    toast.info("Wallet disconnected");
   };
 
   if (walletInfo.connected) {
@@ -64,12 +84,22 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
     );
   }
 
+  const isMobile = isMobileDevice();
+  const hasWallet = isWalletAvailable();
+
   return (
     <div className="flex flex-col items-center space-y-4">
       <p className="text-sm text-center mb-2">
         Connect your wallet to play<br />
         <span className="text-xs text-muted-foreground">Fee: {formatMonadAmount(GAME_FEE)}</span>
       </p>
+      
+      {isMobile && !hasWallet && (
+        <p className="text-xs text-amber-500 text-center mb-2">
+          For best experience, open this app in your wallet's browser
+        </p>
+      )}
+      
       <div className="flex flex-col sm:flex-row gap-2">
         <Button 
           variant="outline"

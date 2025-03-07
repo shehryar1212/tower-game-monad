@@ -1,5 +1,6 @@
 
 import { ethers } from 'ethers';
+import { toast } from 'sonner';
 
 export interface WalletInfo {
   address: string;
@@ -31,9 +32,71 @@ export const MONAD_TESTNET = {
   blockExplorerUrls: ['https://testnet.monadexplorer.com']
 };
 
+// Helper function to detect if we're on a mobile device
+export const isMobileDevice = () => {
+  return (
+    typeof window !== 'undefined' &&
+    (navigator.userAgent.match(/Android/i) ||
+      navigator.userAgent.match(/webOS/i) ||
+      navigator.userAgent.match(/iPhone/i) ||
+      navigator.userAgent.match(/iPad/i) ||
+      navigator.userAgent.match(/iPod/i) ||
+      navigator.userAgent.match(/BlackBerry/i) ||
+      navigator.userAgent.match(/Windows Phone/i))
+  );
+};
+
+// Helper to detect if wallet is available in mobile browser
+export const isWalletAvailable = () => {
+  if (typeof window === 'undefined') return false;
+  
+  // Check for injected Ethereum provider (MetaMask, Trust Wallet, etc.)
+  if (window.ethereum) return true;
+  
+  // Check for Phantom
+  if (window.solana) return true;
+  
+  return false;
+};
+
+// Helper to open deep link for mobile wallets
+export const openMobileWalletApp = () => {
+  const isMobile = isMobileDevice();
+  
+  if (!isMobile) return;
+  
+  // For MetaMask mobile
+  if (window.ethereum && window.ethereum.isMetaMask) {
+    window.open('https://metamask.app.link/dapp/4f528623-c426-4504-9f3c-c2c0ec05c0e5.lovableproject.com/', '_blank');
+    return;
+  }
+  
+  // For other mobile wallets, try universal links
+  // Detect user's device
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  
+  if (isIOS) {
+    // iOS deep links
+    window.open('https://metamask.app.link/dapp/4f528623-c426-4504-9f3c-c2c0ec05c0e5.lovableproject.com/', '_blank');
+  } else if (isAndroid) {
+    // Android deep links
+    window.open('https://metamask.app.link/dapp/4f528623-c426-4504-9f3c-c2c0ec05c0e5.lovableproject.com/', '_blank');
+  }
+};
+
 export const connectMetaMask = async (): Promise<WalletInfo> => {
+  // Check if MetaMask is installed
   if (!window.ethereum) {
-    throw new Error('MetaMask is not installed');
+    // If on mobile, suggest opening the wallet app
+    if (isMobileDevice()) {
+      toast.info("Opening wallet app. Please connect from there.");
+      openMobileWalletApp();
+      throw new Error('Please connect from your wallet app');
+    } else {
+      toast.error("MetaMask is not installed. Please install it to continue.");
+      throw new Error('MetaMask is not installed');
+    }
   }
 
   try {
@@ -77,6 +140,11 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
             }]
           });
           console.log("Successfully added chain");
+        } else if (isMobileDevice() && (switchError.code === 4901 || switchError.code === -32603)) {
+          // Special handling for mobile wallet issues
+          toast.info("Please open in your wallet's browser for best experience");
+          openMobileWalletApp();
+          throw new Error('Please connect through your wallet browser');
         } else {
           console.error("Failed to switch chains:", switchError);
           throw switchError;
@@ -121,7 +189,15 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
 
 export const connectPhantom = async (): Promise<WalletInfo> => {
   if (!window.solana) {
-    throw new Error('Phantom wallet is not installed');
+    // If on mobile, suggest opening the wallet app
+    if (isMobileDevice()) {
+      toast.info("Opening Phantom wallet. Please connect from there.");
+      window.open('https://phantom.app/ul/browse/4f528623-c426-4504-9f3c-c2c0ec05c0e5.lovableproject.com', '_blank');
+      throw new Error('Please connect from Phantom app');
+    } else {
+      toast.error("Phantom wallet is not installed");
+      throw new Error('Phantom wallet is not installed');
+    }
   }
 
   try {
