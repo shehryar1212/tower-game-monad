@@ -53,6 +53,11 @@
   z-index: 9999;
 }
 
+/* Make toast messages more prominent */
+.sonner-toast {
+  z-index: 9999 !important;
+}
+
 /* Make responsive adjustments more aggressive to ensure fit */
 @media (max-width: 768px) {
   .game-container {

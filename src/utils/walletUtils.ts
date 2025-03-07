@@ -118,7 +118,20 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
     if (Number(network.chainId) !== MONAD_TESTNET.chainId) {
       console.log("Chain mismatch detected, attempting to switch...");
       try {
-        // MetaMask requires the chainId in hex format for RPC calls
+        // Try to add the network first instead of switching directly
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: MONAD_TESTNET.chainIdHex,
+            chainName: MONAD_TESTNET.chainName,
+            nativeCurrency: MONAD_TESTNET.nativeCurrency,
+            rpcUrls: MONAD_TESTNET.rpcUrls,
+            blockExplorerUrls: MONAD_TESTNET.blockExplorerUrls
+          }]
+        });
+        console.log("Successfully added chain");
+        
+        // Now try to switch to the added chain
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: MONAD_TESTNET.chainIdHex }]
@@ -126,20 +139,11 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
         console.log("Successfully switched chain");
       } catch (switchError: any) {
         console.log("Switch error:", switchError);
-        // This error code indicates that the chain has not been added to MetaMask
+        
         if (switchError.code === 4902) {
-          console.log("Chain not added, attempting to add...");
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: MONAD_TESTNET.chainIdHex,
-              chainName: MONAD_TESTNET.chainName,
-              nativeCurrency: MONAD_TESTNET.nativeCurrency,
-              rpcUrls: MONAD_TESTNET.rpcUrls,
-              blockExplorerUrls: MONAD_TESTNET.blockExplorerUrls
-            }]
-          });
-          console.log("Successfully added chain");
+          // This error means the chain hasn't been added yet - but we already tried to add it
+          console.error("Failed to add the network: ", switchError);
+          toast.error("Failed to add Monad network to your wallet.");
         } else if (isMobileDevice() && (switchError.code === 4901 || switchError.code === -32603)) {
           // Special handling for mobile wallet issues
           toast.info("Please open in your wallet's browser for best experience");
@@ -147,38 +151,31 @@ export const connectMetaMask = async (): Promise<WalletInfo> => {
           throw new Error('Please connect through your wallet browser');
         } else {
           console.error("Failed to switch chains:", switchError);
-          throw switchError;
+          // Don't throw here, let the user continue with their current network
+          toast.warning("Failed to switch to Monad network. Please try again or switch manually in your wallet.");
         }
       }
       
       // After switching or adding the chain, wait briefly for chain to be updated
       console.log("Waiting for chain update...");
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Re-initialize the provider to get the updated info
-      const updatedProvider = new ethers.BrowserProvider(window.ethereum);
-      const updatedNetwork = await updatedProvider.getNetwork();
-      const updatedBalance = await updatedProvider.getBalance(accounts[0]);
-      const updatedFormattedBalance = ethers.formatEther(updatedBalance);
-      
-      console.log("Updated network chainId:", Number(updatedNetwork.chainId));
-      
-      return {
-        address: accounts[0],
-        balance: updatedFormattedBalance,
-        chainId: Number(updatedNetwork.chainId),
-        connected: true,
-        provider: updatedProvider,
-        type: 'metamask'
-      };
     }
-
+    
+    // Re-fetch updated info after chain switch attempt
+    const updatedProvider = new ethers.BrowserProvider(window.ethereum);
+    const updatedNetwork = await updatedProvider.getNetwork();
+    const updatedBalance = await updatedProvider.getBalance(accounts[0]);
+    const updatedFormattedBalance = ethers.formatEther(updatedBalance);
+    
+    console.log("Updated network chainId:", Number(updatedNetwork.chainId));
+    
+    // Allow connection to proceed regardless of chain to avoid blocking users
     return {
       address: accounts[0],
-      balance: formattedBalance,
-      chainId: Number(network.chainId),
+      balance: updatedFormattedBalance,
+      chainId: Number(updatedNetwork.chainId),
       connected: true,
-      provider,
+      provider: updatedProvider,
       type: 'metamask'
     };
   } catch (error) {

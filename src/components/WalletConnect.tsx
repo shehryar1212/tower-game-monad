@@ -26,7 +26,13 @@ const WalletConnect: React.FC<WalletConnectProps> = ({
     try {
       const wallet = await connectMetaMask();
       onWalletConnect(wallet);
-      toast.success("Wallet connected successfully!");
+      
+      // Check if wallet is on the correct network
+      if (wallet.chainId !== 10143) {
+        toast.warning("You're not on the Monad network. Some features may not work correctly.");
+      } else {
+        toast.success("Wallet connected successfully!");
+      }
     } catch (error) {
       console.error('MetaMask connection error:', error);
       
