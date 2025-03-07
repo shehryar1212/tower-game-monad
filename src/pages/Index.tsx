@@ -37,12 +37,16 @@ const Index = () => {
         </div>
       </header>
       
-      <main className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 p-4 sm:p-6 responsive-container">
-        <div className="game-section w-full lg:w-2/3 opacity-0">
-          <GameCanvas />
-        </div>
-        <div className="leaderboard-section w-full lg:w-1/3 opacity-0">
-          <Leaderboard />
+      <main className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 responsive-container">
+        <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-8">
+          {/* Leaderboard on top for mobile, right side for desktop */}
+          <div className="leaderboard-section order-1 lg:order-2 w-full lg:w-1/3 opacity-0">
+            <Leaderboard />
+          </div>
+          
+          <div className="game-section order-2 lg:order-1 w-full lg:w-2/3 opacity-0">
+            <GameCanvas />
+          </div>
         </div>
       </main>
       

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import Block from './Block';
 import GameHeader from './GameHeader';
@@ -144,19 +143,19 @@ const GameCanvas: React.FC = () => {
   
   // Calculate the visible height for the game canvas
   const canvasHeight = Math.max(
-    600, // Minimum height
+    500, // Reduced from 600 to fit better
     gameState.blocks.length * BLOCK_HEIGHT + 100 // Dynamic height based on blocks
   );
   
   // Calculate how much to scroll the view to focus on the current block
-  const scrollOffset = Math.max(0, (gameState.blocks.length * BLOCK_HEIGHT) - 400);
+  const scrollOffset = Math.max(0, (gameState.blocks.length * BLOCK_HEIGHT) - 350);
   
   // Calculate scale factor for the canvas based on screen size
   const scaleRatio = canvasWidth / GAME_WIDTH;
   
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto p-4 appear">
-      <div className="mb-6 w-full fade-up">
+    <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto appear">
+      <div className="mb-4 w-full fade-up">
         <WalletConnect 
           walletInfo={walletInfo}
           onWalletConnect={handleWalletConnect}
@@ -170,7 +169,7 @@ const GameCanvas: React.FC = () => {
         className="relative border border-border rounded-lg overflow-hidden bg-gradient-to-b from-background to-secondary game-container"
         style={{ 
           width: canvasWidth, 
-          height: 600,
+          height: 500, // Reduced from 600 to fit better
         }}
       >
         {/* Game canvas area */}
@@ -232,12 +231,9 @@ const GameCanvas: React.FC = () => {
         />
       )}
       
-      {/* Instructions */}
-      <div className="mt-6 text-center text-sm text-muted-foreground slide-in-left">
+      {/* Instructions - made smaller and more compact */}
+      <div className="mt-2 text-center text-xs text-muted-foreground slide-in-left">
         <p>Click, tap or press SPACE to place blocks</p>
-        <p className="mt-2 text-xs">
-          Build the tallest tower you can by stacking blocks!
-        </p>
       </div>
     </div>
   );
