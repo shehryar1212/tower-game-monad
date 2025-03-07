@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import Block from './Block';
 import GameHeader from './GameHeader';
@@ -154,7 +153,7 @@ const GameCanvas: React.FC = () => {
   // Calculate scale factor for the canvas based on screen size
   const scaleRatio = canvasWidth / GAME_WIDTH;
   
-  // Calculate initial block position to center it on mobile
+  // Ensure the initial block is centered correctly on all devices
   const initialXPosition = (GAME_WIDTH - (gameState.blocks[0]?.width || 0)) / 2;
   
   return (
@@ -208,6 +207,7 @@ const GameCanvas: React.FC = () => {
             <Block 
               block={gameState.currentBlock} 
               isNew={true} 
+              initialX={gameState.blocks.length === 0 ? initialXPosition : undefined}
             />
           )}
         </div>

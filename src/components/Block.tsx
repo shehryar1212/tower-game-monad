@@ -20,8 +20,8 @@ const Block: React.FC<BlockProps> = ({ block, isNew = false, initialX }) => {
     return () => clearTimeout(timer);
   }, []);
   
-  // For the base block or first block specifically
-  const blockX = block.id === 0 && initialX !== undefined ? initialX : block.x;
+  // For the base block or first block specifically, use the initialX if provided
+  const blockX = initialX !== undefined ? initialX : block.x;
   
   return (
     <div

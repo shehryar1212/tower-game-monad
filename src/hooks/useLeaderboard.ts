@@ -5,16 +5,16 @@ import { LeaderboardEntry } from '@/types/leaderboard';
 
 // Mock data to show when Supabase is not available
 const mockLeaderboardData: LeaderboardEntry[] = [
-  { id: '1', player_name: 'Champion', score: 325, created_at: new Date().toISOString() },
-  { id: '2', player_name: 'Runner-up', score: 290, created_at: new Date().toISOString() },
-  { id: '3', player_name: 'ThirdPlace', score: 268, created_at: new Date().toISOString() },
-  { id: '4', player_name: 'ProGamer', score: 255, created_at: new Date().toISOString() },
-  { id: '5', player_name: 'BlockMaster', score: 241, created_at: new Date().toISOString() },
-  { id: '6', player_name: 'TowerExpert', score: 230, created_at: new Date().toISOString() },
-  { id: '7', player_name: 'StackKing', score: 218, created_at: new Date().toISOString() },
-  { id: '8', player_name: 'BuilderOne', score: 205, created_at: new Date().toISOString() },
-  { id: '9', player_name: 'BlockStacker', score: 193, created_at: new Date().toISOString() },
-  { id: '10', player_name: 'GamePlayer', score: 180, created_at: new Date().toISOString() },
+  { id: '1', player_name: 'Champion', score: 46, created_at: new Date().toISOString() },
+  { id: '2', player_name: 'Runner-up', score: 42, created_at: new Date().toISOString() },
+  { id: '3', player_name: 'ThirdPlace', score: 38, created_at: new Date().toISOString() },
+  { id: '4', player_name: 'ProGamer', score: 35, created_at: new Date().toISOString() },
+  { id: '5', player_name: 'BlockMaster', score: 31, created_at: new Date().toISOString() },
+  { id: '6', player_name: 'TowerExpert', score: 28, created_at: new Date().toISOString() },
+  { id: '7', player_name: 'StackKing', score: 24, created_at: new Date().toISOString() },
+  { id: '8', player_name: 'BuilderOne', score: 21, created_at: new Date().toISOString() },
+  { id: '9', player_name: 'BlockStacker', score: 18, created_at: new Date().toISOString() },
+  { id: '10', player_name: 'GamePlayer', score: 15, created_at: new Date().toISOString() },
 ];
 
 // Check if we're using placeholder Supabase credentials
