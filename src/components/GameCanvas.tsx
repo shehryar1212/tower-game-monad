@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import Block from './Block';
 import GameHeader from './GameHeader';
@@ -143,7 +144,7 @@ const GameCanvas: React.FC = () => {
   
   // Calculate the visible height for the game canvas
   const canvasHeight = Math.max(
-    500, // Reduced from 600 to fit better
+    480, // Reduced from 500 to fit better
     gameState.blocks.length * BLOCK_HEIGHT + 100 // Dynamic height based on blocks
   );
   
@@ -152,6 +153,9 @@ const GameCanvas: React.FC = () => {
   
   // Calculate scale factor for the canvas based on screen size
   const scaleRatio = canvasWidth / GAME_WIDTH;
+  
+  // Calculate initial block position to center it on mobile
+  const initialXPosition = (GAME_WIDTH - (gameState.blocks[0]?.width || 0)) / 2;
   
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto appear">
@@ -169,7 +173,7 @@ const GameCanvas: React.FC = () => {
         className="relative border border-border rounded-lg overflow-hidden bg-gradient-to-b from-background to-secondary game-container"
         style={{ 
           width: canvasWidth, 
-          height: 500, // Reduced from 600 to fit better
+          height: 480, // Reduced from 500 to fit better
         }}
       >
         {/* Game canvas area */}
@@ -192,7 +196,11 @@ const GameCanvas: React.FC = () => {
           
           {/* Render all placed blocks */}
           {gameState.blocks.map(block => (
-            <Block key={block.id} block={block} />
+            <Block 
+              key={block.id} 
+              block={block} 
+              initialX={block.id === 0 ? initialXPosition : undefined}
+            />
           ))}
           
           {/* Render current moving block */}

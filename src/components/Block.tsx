@@ -1,53 +1,48 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Block as BlockType } from '../utils/gameLogic';
 
 interface BlockProps {
   block: BlockType;
-  isBase?: boolean;
   isNew?: boolean;
+  initialX?: number;
 }
 
-const Block: React.FC<BlockProps> = ({ block, isBase = false, isNew = false }) => {
-  const blockRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isNew && blockRef.current) {
-      blockRef.current.classList.add('block-enter');
-      
-      const timeout = setTimeout(() => {
-        if (blockRef.current) {
-          blockRef.current.classList.remove('block-enter');
-        }
-      }, 500);
-      
-      return () => clearTimeout(timeout);
-    }
-  }, [isNew]);
-
-  // Calculate block shadow based on height
-  const shadowIntensity = Math.min(0.3, 0.05 + (block.y * 0.01));
+const Block: React.FC<BlockProps> = ({ block, isNew = false, initialX }) => {
+  const [mounted, setMounted] = useState(false);
   
-  // Add subtle animation for perfect blocks
-  const animationClass = block.perfect ? 'pulse-soft' : '';
+  // Apply an effect to make sure new blocks animate in smoothly
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 10);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // For the base block or first block specifically
+  const blockX = block.id === 0 && initialX !== undefined ? initialX : block.x;
   
   return (
     <div
-      ref={blockRef}
-      className={`absolute game-block ${block.perfect ? 'shine-effect' : ''} ${animationClass}`}
+      className={`absolute game-block ${isNew ? 'block-enter' : ''} ${mounted ? 'opacity-100' : 'opacity-0'}`}
       style={{
-        left: `${block.x}px`,
-        bottom: `${block.y}px`,
-        width: `${block.width}px`,
-        height: `${isBase ? 10 : 30}px`,
+        width: block.width,
+        height: 30,
+        left: blockX,
+        bottom: block.y,
         backgroundColor: block.color,
-        boxShadow: `0 ${block.y > 300 ? 8 : 4}px 12px rgba(0, 0, 0, ${shadowIntensity})`,
+        transition: 'opacity 0.3s, transform 0.3s',
+        transform: mounted ? 'scale(1)' : 'scale(0.95)',
+        zIndex: block.id + 1,
         borderRadius: '2px',
-        zIndex: block.id,
-        transform: `${block.perfect ? 'scale(1.02)' : 'scale(1)'}`,
-        transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out'
+        boxShadow: block.perfect ? '0 0 10px rgba(255, 255, 255, 0.7)' : 'none',
       }}
-    />
+    >
+      {block.perfect && (
+        <div className="absolute inset-0 shine-effect"></div>
+      )}
+    </div>
   );
 };
 
