@@ -63,7 +63,8 @@
 @media (max-width: 768px) {
   .game-container {
     transform: scale(0.9);
-    transform-origin: bottom center; /* Changed from top center to bottom center */
+    transform-origin: bottom center; /* Bottom center alignment */
+    margin-bottom: 1rem; /* Add margin at bottom to push up */
   }
   
   /* Toast adjustments for mobile */
@@ -76,12 +77,18 @@
   .game-canvas {
     transform-origin: bottom center !important;
   }
+  
+  /* Force block centering on mobile */
+  .game-block {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
 }
 
 @media (max-width: 480px) {
   .game-container {
     transform: scale(0.8);
-    transform-origin: bottom center; /* Changed from top center to bottom center */
+    transform-origin: bottom center;
   }
 }
 
@@ -89,10 +96,15 @@
 @media (max-width: 640px) {
   .game-container {
     margin: 0 auto;
+    margin-bottom: 1.5rem; /* Add more bottom margin for smaller screens */
   }
   
   main {
     padding-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: calc(100vh - 100px);
   }
 }
 

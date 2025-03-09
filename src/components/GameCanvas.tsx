@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import Block from './Block';
 import GameHeader from './GameHeader';
@@ -144,8 +143,8 @@ const GameCanvas: React.FC = () => {
   
   // Calculate the visible height for the game canvas
   const canvasHeight = Math.max(
-    480, // Reduced from 500 to fit better
-    gameState.blocks.length * BLOCK_HEIGHT + 100 // Dynamic height based on blocks
+    480,
+    gameState.blocks.length * BLOCK_HEIGHT + 100
   );
   
   // Calculate how much to scroll the view to focus on the current block
@@ -154,8 +153,8 @@ const GameCanvas: React.FC = () => {
   // Calculate scale factor for the canvas based on screen size
   const scaleRatio = canvasWidth / GAME_WIDTH;
   
-  // Ensure the initial block is centered horizontally at the bottom of the screen
-  const initialXPosition = (GAME_WIDTH - (gameState.blocks[0]?.width || 0)) / 2;
+  // Ensure the initial block is truly centered horizontally
+  const initialXPosition = GAME_WIDTH / 2 - (gameState.blocks[0]?.width || 0) / 2;
   
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto appear">
@@ -173,7 +172,7 @@ const GameCanvas: React.FC = () => {
         className="relative border border-border rounded-lg overflow-hidden bg-gradient-to-b from-background to-secondary game-container"
         style={{ 
           width: canvasWidth, 
-          height: 480, // Reduced from 500 to fit better
+          height: 480,
         }}
       >
         {/* Game canvas area */}
@@ -184,13 +183,13 @@ const GameCanvas: React.FC = () => {
           style={{ 
             overflow: 'hidden',
             transform: `translateY(${-scrollOffset}px) scale(${scaleRatio})`,
-            transformOrigin: 'bottom center', // Changed from 'top center' to 'bottom center'
+            transformOrigin: 'bottom center',
             transition: 'transform 0.5s cubic-bezier(0.33, 1, 0.68, 1)',
           }}
         >
           {/* Base platform */}
           <div
-            className="absolute bottom-0 left-0 w-full h-10 bg-gray-800 rounded-b-lg"
+            className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-10 bg-gray-800 rounded-b-lg"
             style={{ zIndex: 0 }}
           />
           
@@ -200,6 +199,7 @@ const GameCanvas: React.FC = () => {
               key={block.id} 
               block={block} 
               initialX={block.id === 0 ? initialXPosition : undefined}
+              centered={true}
             />
           ))}
           
@@ -209,6 +209,7 @@ const GameCanvas: React.FC = () => {
               block={gameState.currentBlock} 
               isNew={true} 
               initialX={gameState.blocks.length === 0 ? initialXPosition : undefined}
+              centered={true}
             />
           )}
         </div>
