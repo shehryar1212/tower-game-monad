@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import Block from './Block';
 import GameHeader from './GameHeader';
@@ -153,7 +154,7 @@ const GameCanvas: React.FC = () => {
   // Calculate scale factor for the canvas based on screen size
   const scaleRatio = canvasWidth / GAME_WIDTH;
   
-  // Ensure the initial block is centered correctly on all devices
+  // Ensure the initial block is centered horizontally at the bottom of the screen
   const initialXPosition = (GAME_WIDTH - (gameState.blocks[0]?.width || 0)) / 2;
   
   return (
@@ -183,7 +184,7 @@ const GameCanvas: React.FC = () => {
           style={{ 
             overflow: 'hidden',
             transform: `translateY(${-scrollOffset}px) scale(${scaleRatio})`,
-            transformOrigin: 'top center',
+            transformOrigin: 'bottom center', // Changed from 'top center' to 'bottom center'
             transition: 'transform 0.5s cubic-bezier(0.33, 1, 0.68, 1)',
           }}
         >

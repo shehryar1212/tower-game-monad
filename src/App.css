@@ -1,3 +1,4 @@
+
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -62,7 +63,7 @@
 @media (max-width: 768px) {
   .game-container {
     transform: scale(0.9);
-    transform-origin: top center;
+    transform-origin: bottom center; /* Changed from top center to bottom center */
   }
   
   /* Toast adjustments for mobile */
@@ -70,12 +71,17 @@
     font-size: 14px;
     padding: 8px;
   }
+  
+  /* Ensure game canvas properly aligns at the bottom */
+  .game-canvas {
+    transform-origin: bottom center !important;
+  }
 }
 
 @media (max-width: 480px) {
   .game-container {
     transform: scale(0.8);
-    transform-origin: top center;
+    transform-origin: bottom center; /* Changed from top center to bottom center */
   }
 }
 
