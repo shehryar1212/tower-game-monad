@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import Block from './Block';
 import GameHeader from './GameHeader';
@@ -156,6 +157,9 @@ const GameCanvas: React.FC = () => {
   // Ensure the initial block is truly centered horizontally
   const initialXPosition = GAME_WIDTH / 2 - (gameState.blocks[0]?.width || 0) / 2;
   
+  // Determine if we should center the blocks (first block or mobile view)
+  const shouldCenterBlocks = window.innerWidth < 768;
+  
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto appear">
       <div className="mb-4 w-full fade-up">
@@ -199,7 +203,7 @@ const GameCanvas: React.FC = () => {
               key={block.id} 
               block={block} 
               initialX={block.id === 0 ? initialXPosition : undefined}
-              centered={true}
+              centered={block.id === 0 || shouldCenterBlocks}
             />
           ))}
           
@@ -209,7 +213,7 @@ const GameCanvas: React.FC = () => {
               block={gameState.currentBlock} 
               isNew={true} 
               initialX={gameState.blocks.length === 0 ? initialXPosition : undefined}
-              centered={true}
+              centered={shouldCenterBlocks}
             />
           )}
         </div>

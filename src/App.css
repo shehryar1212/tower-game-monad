@@ -78,8 +78,8 @@
     transform-origin: bottom center !important;
   }
   
-  /* Force block centering on mobile */
-  .game-block {
+  /* Don't force block centering on mobile - allow blocks to move */
+  .game-block.centered {
     left: 50% !important;
     transform: translateX(-50%) !important;
   }
@@ -114,5 +114,31 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Shine effect for perfect blocks */
+.shine-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 200%;
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
   }
 }

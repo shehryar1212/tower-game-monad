@@ -24,15 +24,17 @@ const Block: React.FC<BlockProps> = ({ block, isNew = false, initialX, centered 
   // For the base block or first block specifically, use the initialX if provided
   let blockX = initialX !== undefined ? initialX : block.x;
   
-  // Apply centering if requested
+  // Create style properties for the block
   const style: React.CSSProperties = {
     width: block.width,
     height: 30,
     left: centered ? '50%' : blockX,
     bottom: block.y,
     backgroundColor: block.color,
-    transition: 'opacity 0.3s, transform 0.3s',
-    transform: mounted ? (centered ? `translateX(-50%) scale(1)` : 'scale(1)') : 'scale(0.95)',
+    transition: isNew ? 'opacity 0.3s, transform 0.3s' : 'opacity 0.3s, transform 0.3s, left 0s',
+    transform: mounted 
+      ? (centered ? `translateX(-50%) scale(1)` : 'scale(1)') 
+      : (centered ? `translateX(-50%) scale(0.95)` : 'scale(0.95)'),
     zIndex: block.id + 1,
     borderRadius: '2px',
     boxShadow: block.perfect ? '0 0 10px rgba(255, 255, 255, 0.7)' : 'none',
