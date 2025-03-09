@@ -21,13 +21,17 @@ const GameCanvas: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(createInitialState());
   const [walletInfo, setWalletInfo] = useState<WalletInfo>(defaultWalletInfo);
   const [canvasWidth, setCanvasWidth] = useState(GAME_WIDTH);
+  const [isMobile, setIsMobile] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>(0);
   const lastUpdateTimeRef = useRef<number>(0);
   
-  // Responsive canvas sizing
+  // Responsive canvas sizing and mobile detection
   useEffect(() => {
     const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      
       if (window.innerWidth < 640) {
         setCanvasWidth(Math.min(GAME_WIDTH, window.innerWidth - 32));
       } else {
@@ -157,9 +161,6 @@ const GameCanvas: React.FC = () => {
   // Ensure the initial block is truly centered horizontally
   const initialXPosition = GAME_WIDTH / 2 - (gameState.blocks[0]?.width || 0) / 2;
   
-  // Determine if we should center the blocks (first block or mobile view)
-  const shouldCenterBlocks = window.innerWidth < 768;
-  
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto appear">
       <div className="mb-4 w-full fade-up">
@@ -203,7 +204,7 @@ const GameCanvas: React.FC = () => {
               key={block.id} 
               block={block} 
               initialX={block.id === 0 ? initialXPosition : undefined}
-              centered={block.id === 0 || shouldCenterBlocks}
+              centered={block.id === 0}
             />
           ))}
           
@@ -213,7 +214,7 @@ const GameCanvas: React.FC = () => {
               block={gameState.currentBlock} 
               isNew={true} 
               initialX={gameState.blocks.length === 0 ? initialXPosition : undefined}
-              centered={shouldCenterBlocks}
+              centered={false}
             />
           )}
         </div>

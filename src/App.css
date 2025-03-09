@@ -78,7 +78,7 @@
     transform-origin: bottom center !important;
   }
   
-  /* Don't force block centering on mobile - allow blocks to move */
+  /* Only center the blocks with centered class */
   .game-block.centered {
     left: 50% !important;
     transform: translateX(-50%) !important;

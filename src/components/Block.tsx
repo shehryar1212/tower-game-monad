@@ -31,7 +31,8 @@ const Block: React.FC<BlockProps> = ({ block, isNew = false, initialX, centered 
     left: centered ? '50%' : blockX,
     bottom: block.y,
     backgroundColor: block.color,
-    transition: isNew ? 'opacity 0.3s, transform 0.3s' : 'opacity 0.3s, transform 0.3s, left 0s',
+    // For moving blocks, don't transition the 'left' property to allow smooth movement
+    transition: isNew || !centered ? 'opacity 0.3s, transform 0.3s' : 'opacity 0.3s, transform 0.3s, left 0.3s',
     transform: mounted 
       ? (centered ? `translateX(-50%) scale(1)` : 'scale(1)') 
       : (centered ? `translateX(-50%) scale(0.95)` : 'scale(0.95)'),
@@ -43,7 +44,7 @@ const Block: React.FC<BlockProps> = ({ block, isNew = false, initialX, centered 
   
   return (
     <div
-      className={`game-block ${isNew ? 'block-enter' : ''} ${mounted ? 'opacity-100' : 'opacity-0'}`}
+      className={`game-block ${isNew ? 'block-enter' : ''} ${mounted ? 'opacity-100' : 'opacity-0'} ${centered ? 'centered' : ''}`}
       style={style}
     >
       {block.perfect && (
