@@ -21,7 +21,3 @@ This project showcases interactive UI design, game logic implementation in TypeS
 | TailwindCSS| Styling |
 | HTML/CSS   | UI layout |
 
-
-
-# install dependencies
-npm install
